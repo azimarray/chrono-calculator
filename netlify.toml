@@ -1,0 +1,15 @@
+# Netlify build settings for Chrono Calculator.
+#
+# Git deploys: Netlify installs dependencies, runs the Vite build and publishes dist/.
+# Safety net: if the Vite build ever fails, the last tested build in prebuilt/ is published instead,
+# so the live site never breaks. (Check the deploy log for "Using prebuilt/" if you edit the source.)
+#
+# Drag-and-drop deploys don't use this file: drop the ready-made dist/ folder instead.
+
+[build]
+  command = "npm run build || (echo 'Vite build failed - Using prebuilt/' && rm -rf dist && cp -r prebuilt dist)"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--no-audit --no-fund"
