@@ -18,14 +18,13 @@ const sliderX = (j: number) => RX0 - PITCH * j;
 const KNOB_Y0 = 682;
 const KNOB_STEP = 28;
 const knobY = (d: number) => KNOB_Y0 - d * KNOB_STEP;
-/* Lever slot runs from y 474 down to 698, the same bottom edge as the slider slots; the knob rests at its centre. */
-const LEVER = { x: 470, top: 474, bottom: 698, add: 502, neutral: 586, sub: 670 };
+const LEVER = { x: 470, top: 474, bottom: 646, add: 498, neutral: 560, sub: 622 };
 const CRANK = { x: 1335, y: 560 };
 const MOD = 10 ** RES_DIGITS;
 /* The case is drawn at x 110–1490, y 24–857 (the abacus plate's proportions) and scaled onto the plate. */
 const CASE = { x: 110, y: 24, w: 1380, h: 833 };
 const FIT = fitToPlate(CASE.x, CASE.y, CASE.w);
-const CAR = { x: 300, label: 546, row: LEVER.neutral, step: 24 }; // carriage control: arrows level with the resting lever knob
+const CAR = { x: 300, label: 520, row: LEVER.neutral, step: 24 }; // carriage control: arrows level with the resting lever knob
 const CLR = { label: 386, row: 418, name: 452, cnt: 232, res: 342 }; // names share the ADD · MULT baseline (y 452) // fixed clearing knobs
 
 type Lever = 'neutral' | 'add' | 'sub';
@@ -278,7 +277,7 @@ export default function Arithmometer(props: MachineProps) {
         <text x={LEVER.x} y={452} textAnchor="middle" fontSize={15} fontWeight={600} fill="#4a3210" fontFamily="'IBM Plex Sans', sans-serif" letterSpacing={1.5}>
           ADD · MULT
         </text>
-        <text x={LEVER.x} y={LEVER.bottom + 28} textAnchor="middle" fontSize={15} fontWeight={600} fill="#4a3210" fontFamily="'IBM Plex Sans', sans-serif" letterSpacing={1.5}>
+        <text x={LEVER.x} y={LEVER.bottom + 36} textAnchor="middle" fontSize={15} fontWeight={600} fill="#4a3210" fontFamily="'IBM Plex Sans', sans-serif" letterSpacing={1.5}>
           SUB · DIV
         </text>
         <rect x={LEVER.x - 10} y={LEVER.top} width={20} height={LEVER.bottom - LEVER.top} rx={10} fill="#2b1c08" stroke="rgba(0,0,0,.5)" />

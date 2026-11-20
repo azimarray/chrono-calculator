@@ -3,8 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 /*
  * Opening splash: the Azim Archive logo animation (4 s) plays full-screen over the app, then fades away.
  * - Large high-resolution screens get the 4K file; everything else gets the light 1080p copy.
- * - Tries to play with sound; browsers that block that get a muted video and a "Sound on" button.
- * - Skip button, Esc / Enter / Space to skip.
+ * - Tries to play with sound; browsers that block that play it muted.
+ * - Esc / Enter / Space end it early.
  * - If the video can't load or play (offline, power saving, blocked), it gets out of the way quickly.
  * - With reduced motion turned on, it shows the logo as a still instead.
  */
@@ -32,8 +32,6 @@ export default function Splash({ onDone }: { onDone: () => void }) {
   const finished = useRef(false);
   const [src] = useState(pickSource);
   const [leaving, setLeaving] = useState(false);
-  const [showControls, setShowControls] = useState(false);
-  const [mutedFallback, setMutedFallback] = useState(false);
   const [reduced] = useState(() => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false);
 
   const finish = useCallback(() => {
@@ -68,7 +66,6 @@ export default function Splash({ onDone }: { onDone: () => void }) {
 
   useEffect(() => {
     const timers: number[] = [];
-    timers.push(window.setTimeout(() => setShowControls(true), 500));
     if (reduced) {
       timers.push(window.setTimeout(finish, 1500));
       return () => timers.forEach(clearTimeout);
@@ -80,7 +77,6 @@ export default function Splash({ onDone }: { onDone: () => void }) {
       .catch(() => {
         // autoplay with sound was blocked: play muted instead
         el.muted = true;
-        setMutedFallback(true);
         return el.play();
       })
       .catch(() => finish());
@@ -116,35 +112,6 @@ export default function Splash({ onDone }: { onDone: () => void }) {
         />
       )}
 
-      <div className={`splash-controls ${showControls && !leaving ? 'is-visible' : ''}`}>
-        {mutedFallback && !reduced && (
-          <button
-            type="button"
-            className="splash-btn"
-            onClick={() => {
-              const el = video.current;
-              if (!el) return;
-              // the clip is short: replay it from the start with sound
-              el.muted = false;
-              el.currentTime = 0;
-              void el.play();
-              setMutedFallback(false);
-            }}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="currentColor" stroke="none" />
-              <path d="M16 9a4.2 4.2 0 0 1 0 6M18.6 6.6a7.6 7.6 0 0 1 0 10.8" />
-            </svg>
-            Sound on
-          </button>
-        )}
-        <button type="button" className="splash-btn" onClick={finish}>
-          Skip
-          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 6l7 6-7 6M15 6v12" />
-          </svg>
-        </button>
-      </div>
     </div>
   );
 }

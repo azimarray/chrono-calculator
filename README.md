@@ -21,7 +21,7 @@ Locked keys are dimmed per mode; tapping one explains why that era could not do 
 - **Direct manipulation**: click beads; drag the slide and cursor; drag arithmometer sliders, flip the lever, turn the crank, shift the carriage, clear registers; press comptometer keys and pull the clearing crank
 - **Keyboard**: digits, `+ - * /`, `.`, `Enter`, `Backspace`, `Esc`, `r` (√), `^`, `%`, `( )`
 - **PWA**: `manifest.json`, maskable icons, and an offline service worker (`public/sw.js`)
-- **Opening splash**: the Azim Archive logo animation (4 s) plays full-screen when the site opens, then fades into the app. Large high-resolution screens get `splash-4k.mp4`, everything else the lighter `splash.mp4` (1080p). Skip button and Esc/Enter/Space skip it. Browsers that block sound get a muted video with a **Sound on** button. With reduced motion turned on it shows the logo as a still, and offline it skips itself.
+- **Opening splash**: the Azim Archive logo animation (4 s) plays full-screen when the site opens, then fades into the app. Large high-resolution screens get `splash-4k.mp4`, everything else the lighter `splash.mp4` (1080p). Esc/Enter/Space skip it. Browsers that block sound play it muted. With reduced motion turned on it shows the logo as a still, and offline it skips itself.
 - **Matte black** theme throughout; responsive down to phone width
 
 Animations are smooth SVG + CSS transitions driven by a small frame sequencer (`src/lib/useSequencer.ts`), so no animation library is needed.
