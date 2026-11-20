@@ -321,7 +321,7 @@ export default function App() {
             <p className="mt-1.5 text-[13px] text-muted">Evolution of Calculation · watch each machine work, then see the answer</p>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex rounded-full border border-line bg-card p-1 text-[12.5px] font-medium" role="radiogroup" aria-label="Animation speed">
+            <div className="panel flex rounded-full border bg-card p-1 text-[12.5px] font-medium" role="radiogroup" aria-label="Animation speed">
               {[
                 { v: false, l: 'Normal' },
                 { v: true, l: 'Slow-mo steps' },
@@ -346,7 +346,7 @@ export default function App() {
               }}
               aria-pressed={!muted}
               aria-label={muted ? 'Unmute sound' : 'Mute sound'}
-              className="grid h-9 w-9 place-items-center rounded-full border border-line bg-card text-ink transition hover:bg-key-hover"
+              className="panel grid h-9 w-9 place-items-center rounded-full border bg-card text-ink transition hover:bg-key-hover"
             >
               <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="currentColor" stroke="none" />
@@ -369,9 +369,9 @@ export default function App() {
 
         {/* Mode bar */}
         {/* The frame stays exactly as wide as the title and stage; on phones the tabs scroll inside it. */}
-        <nav className="overflow-hidden rounded-2xl border border-line bg-card" aria-label="Calculator mode">
+        <nav className="panel overflow-hidden rounded-2xl border bg-card" aria-label="Calculator mode">
           <div className="mode-scroll overflow-x-auto">
-          <div className="mode-track flex min-w-max gap-1.5 p-1.5 sm:min-w-0 sm:grid sm:grid-cols-5">
+          <div className="flex min-w-max gap-1.5 p-1.5 sm:min-w-0 sm:grid sm:grid-cols-5">
             {MODES.map((m) => {
               const active = m.id === mode;
               return (
@@ -397,7 +397,7 @@ export default function App() {
         </nav>
 
         {/* Stage */}
-        <section className="stage relative aspect-video w-full overflow-hidden rounded-[20px] border border-line" aria-label={`${def.name} stage`}>
+        <section className="panel stage relative aspect-video w-full overflow-hidden rounded-[20px] border" aria-label={`${def.name} stage`}>
           {mode === 'abacus' && <Abacus key={machineKey} {...machineProps} />}
           {mode === 'slide' && <SlideRule key={machineKey} {...machineProps} />}
           {mode === 'arith' && <Arithmometer key={machineKey} {...machineProps} />}
@@ -423,7 +423,7 @@ export default function App() {
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-5">
           <ResultBox mode={def} phase={phase} outcome={outcome} error={error} progress={progress} onExample={tryExample} />
 
-          <section className="rounded-[20px] border border-line bg-card p-3 sm:p-4" aria-label="Input">
+          <section className="panel rounded-[20px] border bg-card p-3 sm:p-4" aria-label="Input">
             <div className="mb-3 rounded-xl border border-line bg-paper px-4 py-2.5">
               <div className="flex items-center justify-between text-[11px] text-muted">
                 <span className="font-mono uppercase tracking-[0.14em]">Entry · {def.name}</span>
@@ -461,7 +461,7 @@ function ResultBox({ mode, phase, outcome, error, progress, onExample }: {
   return (
     <section
       className={`result-box relative overflow-hidden rounded-[20px] border bg-card p-5 transition-[border-color,box-shadow] duration-500 sm:p-6 ${
-        phase === 'done' ? 'is-lit border-accent' : 'border-line'
+        phase === 'done' ? 'is-lit border-accent' : 'panel'
       }`}
       aria-live="polite"
       aria-label="Result and explanation"
