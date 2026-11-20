@@ -368,8 +368,10 @@ export default function App() {
         </header>
 
         {/* Mode bar */}
-        <nav className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0" aria-label="Calculator mode">
-          <div className="flex min-w-max gap-1.5 rounded-2xl border border-line bg-card p-1.5 sm:min-w-0 sm:grid sm:grid-cols-5">
+        {/* The frame stays exactly as wide as the title and stage; on phones the tabs scroll inside it. */}
+        <nav className="overflow-hidden rounded-2xl border border-line bg-card" aria-label="Calculator mode">
+          <div className="mode-scroll overflow-x-auto">
+          <div className="mode-track flex min-w-max gap-1.5 p-1.5 sm:min-w-0 sm:grid sm:grid-cols-5">
             {MODES.map((m) => {
               const active = m.id === mode;
               return (
@@ -390,6 +392,7 @@ export default function App() {
                 </button>
               );
             })}
+          </div>
           </div>
         </nav>
 

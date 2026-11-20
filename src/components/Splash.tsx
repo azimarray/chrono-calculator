@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /*
- * Opening splash: the Azim Archive glow animation (3 s) plays full-screen over the app, then fades away.
+ * Opening splash: the Azim Archive logo animation (4 s) plays full-screen over the app, then fades away.
  * - Large high-resolution screens get the 4K file; everything else gets the light 1080p copy.
  * - Tries to play with sound; browsers that block that get a muted video and a "Sound on" button.
  * - Skip button, Esc / Enter / Space to skip.
@@ -90,7 +90,7 @@ export default function Splash({ onDone }: { onDone: () => void }) {
         if (!el.currentTime) finish();
       }, 3500),
     );
-    // hard cap a little past the video's own 3 s length
+    // hard cap a little past the video's own 4 s length
     timers.push(window.setTimeout(finish, 8000));
     return () => {
       timers.forEach(clearTimeout);

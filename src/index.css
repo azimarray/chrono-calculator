@@ -43,6 +43,25 @@ body::after {
   content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: .05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+/* Mode bar: a faint, smooth blend of each calculator's own colour, centred behind its tab
+   (bronze abacus, red slide rule, brass arithmometer, green comptometer, orange modern). */
+.mode-track {
+  background: linear-gradient(90deg,
+    rgba(192, 145, 95, .17) 10%,
+    rgba(226, 87, 74, .14) 30%,
+    rgba(214, 171, 76, .14) 50%,
+    rgba(70, 176, 123, .14) 70%,
+    rgba(255, 159, 10, .16) 90%);
+}
+.mode-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+.mode-scroll::-webkit-scrollbar { display: none; }
+@media (max-width: 639px) {
+  /* soft edges hint that the tabs scroll sideways inside the frame */
+  .mode-scroll {
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8px, #000 calc(100% - 12px), transparent);
+    mask-image: linear-gradient(to right, transparent 0, #000 8px, #000 calc(100% - 12px), transparent);
+  }
+}
 .app-gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 @media (min-width: 640px) { .app-gutter { padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); } }
 body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
