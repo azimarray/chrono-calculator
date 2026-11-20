@@ -7,6 +7,7 @@
   --ink: #edece8;
   --muted: #8e8c87;
   --line: #29292c;
+  --panel-line: #3e3e44;   /* clear outline for the main sections */
   --key: #202022;
   --key-hover: #2a2a2d;
   --key-op: #2c2c2f;
@@ -42,6 +43,21 @@ html, body { background: var(--paper); color: var(--ink); }
 body::after {
   content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: .05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.mode-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+.mode-scroll::-webkit-scrollbar { display: none; }
+@media (max-width: 639px) {
+  /* soft edges hint that the tabs scroll sideways inside the frame */
+  .mode-scroll {
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8px, #000 calc(100% - 12px), transparent);
+    mask-image: linear-gradient(to right, transparent 0, #000 8px, #000 calc(100% - 12px), transparent);
+  }
+}
+/* Main sections (mode bar, stage, result, keypad, header controls): a clearly visible outline
+   plus a faint top highlight, so each one reads as its own panel against the matte black. */
+.panel {
+  border-color: var(--panel-line);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .045), 0 0 0 1px rgba(0, 0, 0, .35), 0 10px 28px -18px rgba(0, 0, 0, .9);
 }
 .app-gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 @media (min-width: 640px) { .app-gutter { padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); } }
