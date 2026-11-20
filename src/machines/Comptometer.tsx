@@ -271,7 +271,7 @@ export default function Comptometer(props: MachineProps) {
           <rect x={84} y={-15} width={34} height={7} rx={3.5} fill="rgba(255,255,255,.22)" />
           <circle r={11} fill="url(#screwGrad)" stroke="rgba(0,0,0,.4)" />
         </g>
-        <text x={CRANK.x + 50} y={CRANK.y - 46} textAnchor="middle" fontSize={15} fontWeight={600} fill="#e4ddd2" letterSpacing={2} fontFamily="'IBM Plex Sans', sans-serif">
+        <text x={CRANK.x - 16} y={CRANK.y + 6} textAnchor="end" fontSize={15} fontWeight={700} fill="#3b1f0e" letterSpacing={2} fontFamily="'IBM Plex Sans', sans-serif">
           CLEAR
         </text>
       </g>
