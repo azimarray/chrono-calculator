@@ -25,7 +25,7 @@ const MOD = 10 ** RES_DIGITS;
 const CASE = { x: 110, y: 24, w: 1380, h: 833 };
 const FIT = fitToPlate(CASE.x, CASE.y, CASE.w);
 const CAR = { x: 300, label: 528, row: 568, step: 24 }; // carriage position control
-const CLR = { label: 392, row: 424, name: 456, cnt: 250, res: 350 }; // fixed clearing knobs
+const CLR = { label: 386, row: 418, name: 452, cnt: 232, res: 342 }; // names share the ADD · MULT baseline (y 452) // fixed clearing knobs
 
 type Lever = 'neutral' | 'add' | 'sub';
 export interface ArithState {
@@ -344,7 +344,7 @@ export default function Arithmometer(props: MachineProps) {
 
       {/* carriage position control: arrows either side of five position dots */}
       <g fontFamily="'IBM Plex Sans', sans-serif" fill="#4a3210">
-        <text x={CAR.x} y={CAR.label} textAnchor="middle" fontSize={13} fontWeight={600} letterSpacing={1.5}>
+        <text x={CAR.x} y={CAR.label} textAnchor="middle" fontSize={15} fontWeight={600} letterSpacing={1.5}>
           CARRIAGE
         </text>
         {Array.from({ length: MAX_SHIFT + 1 }, (_, k) => (
@@ -397,14 +397,14 @@ export default function Arithmometer(props: MachineProps) {
           <circle r={18} fill="url(#screwGrad)" stroke="rgba(0,0,0,.45)" />
           <circle cy={-84} r={22} fill="url(#arIvory)" stroke="rgba(0,0,0,.35)" filter="url(#smallShadow)" />
         </g>
-        <text x={CRANK.x} y={CRANK.y + 104} textAnchor="middle" fontSize={13} fill="#4a3210" fontFamily="'IBM Plex Sans', sans-serif" letterSpacing={1.5}>
+        <text x={CRANK.x} y={CRANK.y + 104} textAnchor="middle" fontSize={15} fontWeight={600} fill="#4a3210" fontFamily="'IBM Plex Sans', sans-serif" letterSpacing={1.5}>
           CRANK
         </text>
       </g>
 
       {/* fixed clearing knobs: they stay on the faceplate when the carriage moves */}
       <g fontFamily="'IBM Plex Sans', sans-serif" fill="#4a3210">
-        <text x={(CLR.cnt + CLR.res) / 2} y={CLR.label} textAnchor="middle" fontSize={13} fontWeight={600} letterSpacing={1.5}>
+        <text x={(CLR.cnt + CLR.res) / 2} y={CLR.label} textAnchor="middle" fontSize={15} fontWeight={600} letterSpacing={1.5}>
           CLEAR
         </text>
         {[
@@ -428,7 +428,7 @@ export default function Arithmometer(props: MachineProps) {
             <text x={k.x} y={CLR.row + 5} textAnchor="middle" fontSize={14} fontWeight={700} fill="#5a3f14">
               {k.key}
             </text>
-            <text x={k.x} y={CLR.name} textAnchor="middle" fontSize={11} fontWeight={600} letterSpacing={1.2}>
+            <text x={k.x} y={CLR.name} textAnchor="middle" fontSize={15} fontWeight={600} letterSpacing={1.5}>
               {k.name}
             </text>
           </g>
@@ -444,7 +444,7 @@ export default function Arithmometer(props: MachineProps) {
           { x0: resX(RES_DIGITS - 1) - 36, x1: resX(0) + 36, label: 'RESULT' },
         ].map((g) => (
           <g key={g.label}>
-            <text x={g.x0 + 4} y={202} fontSize={12} fontWeight={600} fill="#4a3210" letterSpacing={2} fontFamily="'IBM Plex Sans', sans-serif">
+            <text x={g.x0 + 4} y={202} fontSize={15} fontWeight={600} fill="#4a3210" letterSpacing={1.5} fontFamily="'IBM Plex Sans', sans-serif">
               {g.label}
             </text>
             <rect x={g.x0} y={212} width={g.x1 - g.x0} height={76} rx={10} fill="rgba(70,45,10,.16)" stroke="rgba(70,45,10,.5)" strokeWidth={1.5} />

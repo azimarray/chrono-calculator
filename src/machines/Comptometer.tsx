@@ -253,7 +253,7 @@ export default function Comptometer(props: MachineProps) {
 
       {/* front accumulator band */}
       <rect x={176} y={730} width={1248} height={86} rx={14} fill="url(#cpBand)" stroke="rgba(0,0,0,.3)" />
-      <text x={262} y={782} textAnchor="middle" fontSize={13} fill="#3b1f0e" letterSpacing={2} fontFamily="'IBM Plex Sans', sans-serif">
+      <text x={262} y={782} textAnchor="middle" fontSize={15} fontWeight={700} fill="#3b1f0e" letterSpacing={2} fontFamily="'IBM Plex Sans', sans-serif">
         TOTAL
       </text>
       {wheels.map((d, i) => (
