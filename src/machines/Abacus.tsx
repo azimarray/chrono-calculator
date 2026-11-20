@@ -18,8 +18,39 @@ const COL_NAME = ['units (I)', 'tens (X)', 'hundreds (C)', 'thousands (∞)', 't
 
 export interface AbacusState {
   d: number[]; // 7 digits, index 0 = units
+  /** Fraction column, beads counted: [1/24 slot (0–1), 1/48 slot (0–1), 1/72 slot (0–2)]. */
+  fr?: number[];
 }
-const REST: AbacusState = { d: Array(COLS).fill(0) };
+const REST: AbacusState = { d: Array(COLS).fill(0), fr: [0, 0, 0] };
+
+/* Roman fraction column (right of the units). Beads count when moved toward the centre bar,
+   like the whole-number beads: the top slot's bead drops down, the lower slots' beads rise. */
+const FRAC_X = 1250;
+const FRACS = [
+  { name: 'Semuncia', label: '1/24', unit: 6, y: 280, h: 90, beads: 1, mark: 'Ө', below: false }, // unit = 144ths
+  { name: 'Sicilicus', label: '1/48', unit: 3, y: 425, h: 92, beads: 1, mark: 'Ɔ', below: true },
+  { name: 'Sextula', label: '1/72', unit: 2, y: 538, h: 184, beads: 2, mark: '2', below: true },
+];
+const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a);
+
+/** “1,234 + 1/16” style reading of the whole board. */
+function boardReading(d: number[], fr: number[]): string {
+  const whole = fmt(Number(d.slice().reverse().join('')));
+  const n = fr.reduce((sum, c, i) => sum + c * FRACS[i].unit, 0);
+  if (!n) return whole;
+  const g = gcd(n, 144);
+  const frac = `${n / g}/${144 / g}`;
+  return whole === '0' ? frac : `${whole} + ${frac}`;
+}
+
+/** y position of bead i (0 = the one nearest the bar) in fraction slot k. */
+function fracBeadY(k: number, i: number, active: boolean): number {
+  const f = FRACS[k];
+  const top = f.y + 24;
+  const bottom = f.y + f.h - 24;
+  if (!f.below) return active ? bottom : top; // above the bar: counts when dropped down
+  return active ? top + i * 50 : bottom - (f.beads - 1 - i) * 50; // below the bar: counts when pushed up
+}
 
 /* Planning ---------------------------------------------------------- */
 export function planAbacus(job: Job): Plan<AbacusState> {
@@ -163,6 +194,7 @@ export default function Abacus(props: MachineProps) {
   const seq = useSequencer<AbacusState>(REST, props.speed);
   useJobRunner(props.job, planAbacus, seq, props, REST);
   const { d } = seq.state;
+  const fr = seq.state.fr ?? REST.fr!;
   const interactive = !seq.playing;
 
   const manualSet = useCallback(
@@ -170,11 +202,22 @@ export default function Abacus(props: MachineProps) {
       sfx.bead();
       const next = [...d];
       next[col] = v;
-      const reading = Number(next.slice().reverse().join(''));
-      seq.setManual({ d: next }, 220);
-      seq.setCallout({ x: colX(col), y: 385, text: `Board reads ${fmt(reading)}`, step: 0, total: 0, ly: 54 });
+      seq.setManual({ d: next, fr }, 220);
+      seq.setCallout({ x: colX(col), y: 385, text: `Board reads ${boardReading(next, fr)}`, step: 0, total: 0, ly: 54 });
     },
-    [seq, d],
+    [seq, d, fr],
+  );
+
+  const manualFrac = useCallback(
+    (k: number, count: number) => {
+      sfx.bead();
+      const next = [...fr];
+      next[k] = count;
+      seq.setManual({ d, fr: next }, 220);
+      const f = FRACS[k];
+      seq.setCallout({ x: FRAC_X, y: f.y + f.h / 2, text: `${f.name} = ${f.label} · board reads ${boardReading(d, next)}`, step: 0, total: 0, ly: 54 });
+    },
+    [seq, d, fr],
   );
 
   return (
@@ -236,18 +279,25 @@ export default function Abacus(props: MachineProps) {
           </g>
         );
       })}
-      {/* ounce (uncia) fraction column — decorative, as on the original */}
-      {[
-        { y: 300, h: 70, m: 'Ө' },
-        { y: 425, h: 70, m: 'Ɔ' },
-        { y: 560, h: 110, m: '2' },
-      ].map((s, i) => (
-        <g key={`u${i}`}>
-          <rect x={1250 - 18} y={s.y} width={36} height={s.h} rx={18} fill="#141416" stroke="rgba(15,10,6,.75)" strokeWidth={3} />
-          <text x={1196} y={s.y + s.h / 2 + 12} textAnchor="middle" fontSize={32} fontFamily="Fraunces, Georgia, serif" fill="#2a1f15">
-            {s.m}
+      {/* Roman fraction column: 1/24, 1/48 and 2 × 1/72 — click the beads to set a fraction */}
+      {FRACS.map((f, k) => (
+        <g key={`u${k}`}>
+          <rect x={FRAC_X - 18} y={f.y} width={36} height={f.h} rx={18} fill="#141416" stroke="rgba(15,10,6,.75)" strokeWidth={3} />
+          <text x={1196} y={f.y + f.h / 2 + 12} textAnchor="middle" fontSize={32} fontFamily="Fraunces, Georgia, serif" fill="#2a1f15">
+            {f.mark}
           </text>
-          <Bead x={1250} y={s.y + s.h - 22} interactive={false} />
+          {Array.from({ length: f.beads }, (_, i) => {
+            const active = i < fr[k];
+            return (
+              <Bead
+                key={i}
+                x={FRAC_X}
+                y={fracBeadY(k, i, active)}
+                interactive={interactive}
+                onClick={() => manualFrac(k, active ? i : i + 1)}
+              />
+            );
+          })}
         </g>
       ))}
       <text x={1305} y={397} textAnchor="middle" fontSize={34} fontFamily="Fraunces, Georgia, serif" fill="#2a1f15">S</text>
