@@ -9,22 +9,23 @@ import { DigitWheel, MachineShell, PLATE, Screw, SharedDefs, fitToPlate, fitTran
 const RES_DIGITS = 8;
 const CNT_DIGITS = 6;
 const SLIDERS = 6;
-const MAX_SHIFT = 4;
+const MAX_SHIFT = 3; // 4 carriage positions: at the last one the carriage still sits on the brass
 const PITCH = 72;
 const RX0 = 1130; // units result window & units slider
 const resX = (i: number) => RX0 - PITCH * i;
-const cntX = (i: number) => 560 - 58 * i;
+const cntX = (i: number) => 506 - 48 * i;
 const sliderX = (j: number) => RX0 - PITCH * j;
 const KNOB_Y0 = 682;
 const KNOB_STEP = 28;
 const knobY = (d: number) => KNOB_Y0 - d * KNOB_STEP;
-const LEVER = { x: 470, add: 498, neutral: 560, sub: 622 };
+const LEVER = { x: 470, top: 474, bottom: 646, add: 498, neutral: 560, sub: 622 };
 const CRANK = { x: 1335, y: 560 };
 const MOD = 10 ** RES_DIGITS;
 /* The case is drawn at x 110–1490, y 24–857 (the abacus plate's proportions) and scaled onto the plate. */
 const CASE = { x: 110, y: 24, w: 1380, h: 833 };
 const FIT = fitToPlate(CASE.x, CASE.y, CASE.w);
-const CAR = { x: 300, label: 528, row: 568, step: 24 }; // carriage position control
+const CAR = { x: 300, label: 520, row: LEVER.neutral, step: 24 }; // carriage control: arrows level with the resting lever knob
+const CLR = { label: 386, row: 418, name: 452, cnt: 232, res: 342 }; // names share the ADD · MULT baseline (y 452) // fixed clearing knobs
 
 type Lever = 'neutral' | 'add' | 'sub';
 export interface ArithState {
@@ -123,7 +124,7 @@ export function planArithmometer(job: Job): Plan<ArithState> {
       swapped = true;
     }
     if (A >= 10 ** SLIDERS) return { ok: false, error: 'The multiplicand must fit the 6 setting sliders.' };
-    if (String(B).length > MAX_SHIFT + 1) return { ok: false, error: 'The carriage has 5 positions: the multiplier can have at most 5 digits.' };
+    if (String(B).length > MAX_SHIFT + 1) return { ok: false, error: 'The carriage has 4 positions: the multiplier can have at most 4 digits.' };
     if (A * B >= MOD) return { ok: false, error: 'The product overflows the 8 result windows.' };
     lever('add');
     setSliders(A);
@@ -155,12 +156,12 @@ export function planArithmometer(job: Job): Plan<ArithState> {
     while (p < MAX_SHIFT && (A * 10 ** p) % B !== 0 && A * 10 ** (p + 1) < MOD && Math.floor((A * 10 ** (p + 1)) / B) < 10 ** (MAX_SHIFT + 1)) p++;
     const dividend = A * 10 ** p;
     const q = Math.floor(dividend / B);
-    if (q >= 10 ** (MAX_SHIFT + 1)) return { ok: false, error: 'The quotient needs more than the carriage’s 5 positions.' };
+    if (q >= 10 ** (MAX_SHIFT + 1)) return { ok: false, error: 'The quotient needs more than the carriage’s 4 positions.' };
     lever('add');
     setSliders(A);
     shiftTo(p);
     crank(`Turn once to place the dividend ${job.aStr}${p ? ` (shifted ${p} place${p > 1 ? 's' : ''} for decimals)` : ''} in the result windows`);
-    push({ cnt: 0 }, 'Clear the turn counter', cntX(2), 250, { sound: { kind: 'clear', ms: 400 }, dur: 800, t: 400, ly: 66 });
+    push({ cnt: 0 }, 'Press C to clear the turn counter', CLR.cnt, CLR.row, { sound: { kind: 'clear', ms: 400 }, dur: 800, t: 400, ly: 850 });
     setSliders(B);
     lever('sub');
     const qd = String(q).split('').map(Number);
@@ -276,10 +277,10 @@ export default function Arithmometer(props: MachineProps) {
         <text x={LEVER.x} y={452} textAnchor="middle" fontSize={15} fontWeight={600} fill="#4a3210" fontFamily="'IBM Plex Sans', sans-serif" letterSpacing={1.5}>
           ADD · MULT
         </text>
-        <text x={LEVER.x} y={682} textAnchor="middle" fontSize={15} fontWeight={600} fill="#4a3210" fontFamily="'IBM Plex Sans', sans-serif" letterSpacing={1.5}>
+        <text x={LEVER.x} y={LEVER.bottom + 36} textAnchor="middle" fontSize={15} fontWeight={600} fill="#4a3210" fontFamily="'IBM Plex Sans', sans-serif" letterSpacing={1.5}>
           SUB · DIV
         </text>
-        <rect x={LEVER.x - 10} y={474} width={20} height={172} rx={10} fill="#2b1c08" stroke="rgba(0,0,0,.5)" />
+        <rect x={LEVER.x - 10} y={LEVER.top} width={20} height={LEVER.bottom - LEVER.top} rx={10} fill="#2b1c08" stroke="rgba(0,0,0,.5)" />
         <g
           className={`anim ${interactive ? 'cursor-pointer' : ''}`}
           style={{ transform: `translate(${LEVER.x}px, ${LEVER[s.lever]}px)` }}
@@ -343,7 +344,7 @@ export default function Arithmometer(props: MachineProps) {
 
       {/* carriage position control: arrows either side of five position dots */}
       <g fontFamily="'IBM Plex Sans', sans-serif" fill="#4a3210">
-        <text x={CAR.x} y={CAR.label} textAnchor="middle" fontSize={13} fontWeight={600} letterSpacing={1.5}>
+        <text x={CAR.x} y={CAR.label} textAnchor="middle" fontSize={15} fontWeight={600} letterSpacing={1.5}>
           CARRIAGE
         </text>
         {Array.from({ length: MAX_SHIFT + 1 }, (_, k) => (
@@ -396,38 +397,24 @@ export default function Arithmometer(props: MachineProps) {
           <circle r={18} fill="url(#screwGrad)" stroke="rgba(0,0,0,.45)" />
           <circle cy={-84} r={22} fill="url(#arIvory)" stroke="rgba(0,0,0,.35)" filter="url(#smallShadow)" />
         </g>
-        <text x={CRANK.x} y={CRANK.y + 104} textAnchor="middle" fontSize={13} fill="#4a3210" fontFamily="'IBM Plex Sans', sans-serif" letterSpacing={1.5}>
+        <text x={CRANK.x} y={CRANK.y + 104} textAnchor="middle" fontSize={15} fontWeight={600} fill="#4a3210" fontFamily="'IBM Plex Sans', sans-serif" letterSpacing={1.5}>
           CRANK
         </text>
       </g>
 
-      {/* moving carriage with result + counter windows */}
-      <g className="anim" style={{ transform: `translateX(${s.shift * PITCH}px)` }}>
-        <rect x={196} y={170} width={988} height={166} rx={10} fill="url(#arBrassLight)" stroke="rgba(70,45,10,.6)" strokeWidth={2} filter="url(#smallShadow)" />
-        <rect x={196} y={170} width={988} height={166} rx={10} filter="url(#arBrushed)" opacity={0.3} />
-        <text x={(cntX(0) + cntX(CNT_DIGITS - 1)) / 2} y={204} textAnchor="middle" fontSize={12} fill="#4a3210" letterSpacing={2} fontFamily="'IBM Plex Sans', sans-serif">
-          TURN COUNTER
+      {/* fixed clearing knobs: they stay on the faceplate when the carriage moves */}
+      <g fontFamily="'IBM Plex Sans', sans-serif" fill="#4a3210">
+        <text x={(CLR.cnt + CLR.res) / 2} y={CLR.label} textAnchor="middle" fontSize={15} fontWeight={600} letterSpacing={1.5}>
+          CLEAR
         </text>
-        <text x={(resX(0) + resX(RES_DIGITS - 1)) / 2} y={204} textAnchor="middle" fontSize={12} fill="#4a3210" letterSpacing={2} fontFamily="'IBM Plex Sans', sans-serif">
-          RESULT
-        </text>
-        {cntD.map((d, i) => (
-          <DigitWheel key={`c${i}`} id={`arCnt${i}`} x={cntX(i)} y={250} digit={d} r={20} fontSize={26} face="#efe6cf" />
-        ))}
-        {resD.map((d, i) => (
-          <g key={`r${i}`}>
-            <DigitWheel id={`arRes${i}`} x={resX(i)} y={250} digit={d} r={26} fontSize={34} />
-            {i > 0 && i % 3 === 0 && <circle cx={resX(i) + PITCH / 2} cy={292} r={3.5} fill="#5a3f14" />}
-          </g>
-        ))}
-        {/* clearing knobs */}
         {[
-          { x: 1150, label: 'R', act: () => manual({ ...s, res: 0 }, 'Result windows cleared', resX(0), 250, 66, 500) },
-          { x: 236, label: 'C', act: () => manual({ ...s, cnt: 0 }, 'Counter cleared', cntX(CNT_DIGITS - 1), 250, 66, 500) },
+          { x: CLR.cnt, key: 'C', name: 'COUNTER', act: () => manual({ ...s, cnt: 0 }, 'Turn counter cleared', CLR.cnt, CLR.row, 850, 500) },
+          { x: CLR.res, key: 'R', name: 'RESULT', act: () => manual({ ...s, res: 0 }, 'Result windows cleared', CLR.res, CLR.row, 850, 500) },
         ].map((k) => (
           <g
-            key={k.label}
+            key={k.key}
             className={interactive ? 'cursor-pointer' : ''}
+            opacity={interactive ? 1 : 0.6}
             onPointerDown={
               interactive
                 ? () => {
@@ -437,10 +424,40 @@ export default function Arithmometer(props: MachineProps) {
                 : undefined
             }
           >
-            <circle cx={k.x} cy={306} r={13} fill="url(#arIvory)" stroke="rgba(0,0,0,.35)" />
-            <text x={k.x} y={311} textAnchor="middle" fontSize={13} fontWeight={700} fill="#5a3f14" fontFamily="'IBM Plex Sans', sans-serif">
-              {k.label}
+            <circle cx={k.x} cy={CLR.row} r={16} fill="url(#arIvory)" stroke="rgba(60,40,10,.55)" filter="url(#smallShadow)" />
+            <text x={k.x} y={CLR.row + 5} textAnchor="middle" fontSize={14} fontWeight={700} fill="#5a3f14">
+              {k.key}
             </text>
+            <text x={k.x} y={CLR.name} textAnchor="middle" fontSize={15} fontWeight={600} letterSpacing={1.5}>
+              {k.name}
+            </text>
+          </g>
+        ))}
+      </g>
+
+      {/* moving carriage: turn counter and result windows, each in its own recessed strip */}
+      <g className="anim" style={{ transform: `translateX(${s.shift * PITCH}px)` }}>
+        <rect x={196} y={170} width={988} height={150} rx={10} fill="url(#arBrassLight)" stroke="rgba(70,45,10,.6)" strokeWidth={2} filter="url(#smallShadow)" />
+        <rect x={196} y={170} width={988} height={150} rx={10} filter="url(#arBrushed)" opacity={0.3} />
+        {[
+          { x0: cntX(CNT_DIGITS - 1) - 30, x1: cntX(0) + 30, label: 'TURN COUNTER' },
+          { x0: resX(RES_DIGITS - 1) - 36, x1: resX(0) + 36, label: 'RESULT' },
+        ].map((g) => (
+          <g key={g.label}>
+            <text x={g.x0 + 4} y={202} fontSize={15} fontWeight={600} fill="#4a3210" letterSpacing={1.5} fontFamily="'IBM Plex Sans', sans-serif">
+              {g.label}
+            </text>
+            <rect x={g.x0} y={212} width={g.x1 - g.x0} height={76} rx={10} fill="rgba(70,45,10,.16)" stroke="rgba(70,45,10,.5)" strokeWidth={1.5} />
+            <rect x={g.x0 + 2} y={214} width={g.x1 - g.x0 - 4} height={6} rx={3} fill="rgba(40,25,5,.12)" />
+          </g>
+        ))}
+        {cntD.map((d, i) => (
+          <DigitWheel key={`c${i}`} id={`arCnt${i}`} x={cntX(i)} y={250} digit={d} r={19} fontSize={25} face="#efe6cf" />
+        ))}
+        {resD.map((d, i) => (
+          <g key={`r${i}`}>
+            <DigitWheel id={`arRes${i}`} x={resX(i)} y={250} digit={d} r={26} fontSize={34} />
+            {i > 0 && i % 3 === 0 && <circle cx={resX(i) + PITCH / 2} cy={300} r={3.5} fill="#5a3f14" />}
           </g>
         ))}
       </g>
