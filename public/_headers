@@ -11,9 +11,10 @@
   Content-Type: application/manifest+json
   Cache-Control: no-cache
 
+# Videos: always check for a newer file (cheap 304 when unchanged), so a new splash shows straight away
 /*.mp4
   Content-Type: video/mp4
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=0, must-revalidate
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable

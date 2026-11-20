@@ -20,7 +20,7 @@ declare global {
 function pickSource(): string {
   if (window.__SPLASH_SRC__) return window.__SPLASH_SRC__;
   const physicalWidth = Math.max(window.screen.width, window.screen.height) * (window.devicePixelRatio || 1);
-  return physicalWidth > 2400 ? '/splash-4k.mp4' : '/splash.mp4';
+  return physicalWidth > 2400 ? '/splash-logo-4k.mp4' : '/splash-logo.mp4';
 }
 
 const POSTER = window.__SPLASH_POSTER__ ?? '/splash-poster.jpg';

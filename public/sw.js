@@ -6,7 +6,7 @@
    - Videos and byte-range requests are left to the network: browsers fetch video in
      ranges, which a cache-first worker would break (notably in Safari). Offline, the
      splash simply skips itself. */
-const VERSION = 'chrono-calculator-v4';
+const VERSION = 'chrono-calculator-v5';
 const SHELL = ['/', '/index.html', '/manifest.json', '/icons/icon.svg', '/icons/icon-192.png', '/icons/icon-512.png', '/splash-poster.jpg', '/splash-end.jpg'];
 
 self.addEventListener('install', (event) => {
