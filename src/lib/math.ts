@@ -164,7 +164,3 @@ export function fixedPoint(aStr: string, bStr: string) {
   const f = 10 ** d;
   return { A: Math.round(Number(aStr) * f), B: Math.round(Number(bStr) * f), d };
 }
-
-export function intDigits(n: number): number {
-  return Math.max(1, Math.floor(Math.abs(n)).toString().length);
-}

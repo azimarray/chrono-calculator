@@ -49,18 +49,6 @@ const pretty = (e: string) => {
   return out.trim();
 };
 
-/** Phone-calculator +/− : flip the sign of the number being typed (or of the next one). */
-const endsWithSignMinus = (e: string) => e.endsWith('−') && (e.length === 1 || '+−×÷^(√'.includes(e[e.length - 2]));
-function toggleSign(e: string): string {
-  const m = e.match(/(\d+\.?\d*|\.\d+)$/);
-  const num = m ? m[0] : '';
-  const before = e.slice(0, e.length - num.length);
-  if (before === '') return '−' + num;
-  if (endsWithSignMinus(before)) return before.slice(0, -1) + num;
-  if ('+−×÷^(√'.includes(before[before.length - 1])) return before + '−' + num;
-  return e;
-}
-
 interface InstallEvent extends Event {
   prompt: () => Promise<void>;
 }
@@ -169,24 +157,6 @@ export default function App() {
       }
       setTip(null);
       sfx.tap();
-      if (k === '±') {
-        if (mode !== 'modern') return;
-        if (fresh && phase === 'done' && lastValue !== null) {
-          // flip the shown result; the next digit still starts a new number
-          const v = -lastValue;
-          setLastValue(v);
-          setOutcome({ display: fmt(v), explanation: '' });
-          return;
-        }
-        if (phase === 'done' || phase === 'error') {
-          setPhase('idle');
-          setOutcome(null);
-          setError(null);
-        }
-        setFresh(false);
-        setExpr((e) => toggleSign(fresh ? '' : e));
-        return;
-      }
       if (mode === 'modern' && k !== '=' && (phase === 'done' || phase === 'error')) {
         setPhase('idle');
         setOutcome(null);

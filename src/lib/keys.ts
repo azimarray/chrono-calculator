@@ -3,7 +3,7 @@ import type { ModeId } from '../types';
 export type KeyId =
   | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
   | '.' | '+' | '−' | '×' | '÷' | '√' | '%' | '^' | '(' | ')'
-  | 'C' | '⌫' | '=' | '±';
+  | 'C' | '⌫' | '=';
 
 export interface KeyDef {
   id: KeyId;
@@ -47,7 +47,7 @@ export const ALLOWED: Record<ModeId, KeyId[]> = {
   slide: [...ALWAYS, '.', '×', '÷', '√'],
   arith: [...ALWAYS, '.', '+', '−', '×', '÷'],
   compt: [...ALWAYS, '.', '+', '−', '×', '÷'],
-  modern: [...ALWAYS, '.', '+', '−', '×', '÷', '√', '%', '^', '(', ')', '±'],
+  modern: [...ALWAYS, '.', '+', '−', '×', '÷', '√', '%', '^', '(', ')'],
 };
 
 /** Why an era's machine could not do a locked operation. */
