@@ -34,6 +34,24 @@ npm run build      # production build in dist/
 npm run preview    # serve dist/ to test install + offline
 ```
 
+## Automated tests
+
+Two test suites check the app. Both are in `tests/`.
+
+```bash
+npx playwright install chromium   # first time only: downloads the test browser
+npm test                          # runs both suites
+npm run test:logic                # maths only (a few seconds)
+npm run test:e2e                  # builds the site, then tests it in a real browser
+```
+
+- **Maths test** (`tests/logic.test.ts`): runs each machine's calculation on about 2,500 random sums (whole numbers, decimals, negatives, every operation) and checks both the answer shown and the machine's final position (beads, wheels, crank turns, slide rule reading) against exact arithmetic. It also checks that each machine refuses what its era couldn't do, and tests the modern calculator's maths (operator order, %, powers, roots, signs).
+- **Browser test** (`tests/e2e.test.mjs`): opens the built site in Chromium and uses it like a visitor: sums on every machine (answer hidden until the machine stops), era locks, clicking beads/keys/crank, slow-mo, the sound toggle, install and offline support, phone layout at 390 px, and JavaScript errors.
+
+To test the live site instead of a local build: `node tests/e2e.test.mjs https://chrono-calculator.netlify.app/`
+
+Each suite prints PASS/FAIL per check and exits with an error code if anything fails.
+
 ## Publish on Netlify
 
 There are two ways. Pick one.
@@ -68,6 +86,10 @@ src/
   lib/keys.ts             keypad layout, allowed keys, lock reasons
   lib/useSequencer.ts     frame player shared by all machines
   machines/               Abacus, SlideRule, Arithmometer, Comptometer, ModernCalc
+tests/
+  logic.test.ts           maths test for every machine
+  e2e.test.mjs            browser test of the whole site
+  run-logic.mjs           runs the maths test
 public/
   manifest.json  sw.js  _headers  icons/
 netlify.toml              Netlify build settings
