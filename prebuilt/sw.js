@@ -3,11 +3,9 @@
    - Navigations: network first, cached shell when offline.
    - Same-origin assets (Vite's hashed files, icons): cache first.
    - Google Fonts: stale-while-revalidate.
-   - Videos and byte-range requests are left to the network: browsers fetch video in
-     ranges, which a cache-first worker would break (notably in Safari). Offline, the
-     splash simply skips itself. */
-const VERSION = 'chrono-calculator-v4';
-const SHELL = ['/', '/index.html', '/manifest.json', '/icons/icon.svg', '/icons/icon-192.png', '/icons/icon-512.png', '/splash-poster.jpg', '/splash-end.jpg'];
+   - Byte-range requests are left to the network. */
+const VERSION = 'chrono-calculator-v7';
+const SHELL = ['/', '/index.html', '/manifest.json', '/icons/icon.svg', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -25,7 +23,7 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (req.headers.has('range') || url.pathname.endsWith('.mp4')) return;
+  if (req.headers.has('range')) return;
 
   if (req.mode === 'navigate') {
     event.respondWith(

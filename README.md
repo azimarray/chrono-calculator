@@ -21,7 +21,6 @@ Locked keys are dimmed per mode; tapping one explains why that era could not do 
 - **Direct manipulation**: click beads; drag the slide and cursor; drag arithmometer sliders, flip the lever, turn the crank, shift the carriage, clear registers; press comptometer keys and pull the clearing crank
 - **Keyboard**: digits, `+ - * /`, `.`, `Enter`, `Backspace`, `Esc`, `r` (√), `^`, `%`, `( )`
 - **PWA**: `manifest.json`, maskable icons, and an offline service worker (`public/sw.js`)
-- **Opening splash**: the Azim Archive glow animation (3 s) plays full-screen when the site opens, then fades into the app. Large high-resolution screens get `splash-4k.mp4`, everything else the lighter `splash.mp4` (1080p). Skip button and Esc/Enter/Space skip it. Browsers that block sound get a muted video with a **Sound on** button. With reduced motion turned on it shows the logo as a still, and offline it skips itself.
 - **Matte black** theme throughout; responsive down to phone width
 
 Animations are smooth SVG + CSS transitions driven by a small frame sequencer (`src/lib/useSequencer.ts`), so no animation library is needed.
@@ -64,14 +63,13 @@ To update later, open your site in Netlify → **Deploys** → drag a new `dist`
 src/
   App.tsx                 layout, mode bar, input logic, result box
   components/Keypad.tsx   modern keypad with era locks + tooltips
-  components/Splash.tsx   opening video splash
   lib/audio.ts            Web Audio synthesis
   lib/math.ts             parsing, evaluator, formatting
   lib/keys.ts             keypad layout, allowed keys, lock reasons
   lib/useSequencer.ts     frame player shared by all machines
   machines/               Abacus, SlideRule, Arithmometer, Comptometer, ModernCalc
 public/
-  manifest.json  sw.js  _headers  splash.mp4  splash-4k.mp4  icons/
+  manifest.json  sw.js  _headers  icons/
 netlify.toml              Netlify build settings
 ```
 

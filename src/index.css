@@ -146,26 +146,6 @@ button:focus-visible { outline: 2px solid var(--accent, #c0915f); outline-offset
 .ios-key-wide { grid-column: span 2; }
 .ios-key:focus-visible { outline: .5cqh solid #fff; outline-offset: .4cqh; }
 
-/* Opening splash — background matches the video's own #0a0a0a so there is no visible edge */
-.splash {
-  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center;
-  background: #0a0a0a; transition-property: opacity, visibility; transition-timing-function: ease;
-}
-.splash.is-leaving { opacity: 0; visibility: hidden; }
-.splash-media { width: min(100vw, 177.78dvh); max-height: 100dvh; aspect-ratio: 16 / 9; object-fit: contain; background: #0a0a0a; }
-.splash-controls {
-  position: absolute; display: flex; gap: 8px; opacity: 0; transition: opacity .4s ease;
-  right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-}
-.splash-controls.is-visible { opacity: 1; }
-.splash-btn {
-  display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.08); color: #f2f2f2;
-  font: 500 13px/1 var(--font-sans); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-}
-.splash-btn:hover { background: rgba(255,255,255,.16); }
-.splash-btn svg { width: 15px; height: 15px; }
-
 @media (prefers-reduced-motion: reduce) {
   .callout-pulse, .caret, .working-dots::after { animation: none; }
 }

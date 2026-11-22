@@ -1,22 +1,11 @@
-import { StrictMode, useState } from 'react';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-import Splash from './components/Splash';
 import './index.css';
-
-function Root() {
-  const [splash, setSplash] = useState(true);
-  return (
-    <>
-      <App />
-      {splash && <Splash onDone={() => setSplash(false)} />}
-    </>
-  );
-}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Root />
+    <App />
   </StrictMode>,
 );
 
